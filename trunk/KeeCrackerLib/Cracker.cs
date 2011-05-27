@@ -7,9 +7,9 @@ using NLib;
 using System.Threading;
 using System.Diagnostics;
 
-namespace KeePassDbCracker
+namespace KeeCracker
 {
-    class Cracker
+    public class Cracker
     {
         //--- Constants ---
         const int STATISTICS_UPDATE_INTERVAL = 5000;  // milliseconds
@@ -31,7 +31,7 @@ namespace KeePassDbCracker
         
         //--- Public Methods ---
 
-        public void StartAttack(string databasePath, int numThreads)
+        public void StartAttack(string databasePath, int numThreads, IPasswordSource passwordSource)
         {
             if (numThreads <= 0)
                 throw new ArgumentOutOfRangeException("numThreads");
@@ -46,11 +46,9 @@ namespace KeePassDbCracker
             if (!PerformSelfTest())
                 throw new Exception("Self test failed");
 
-            var passwordGenerator = new PasswordGenerator();
-
             var fileStream = new FileStream(databasePath, FileMode.Open, FileAccess.Read);
 
-            Guesser cracker = new Guesser(fileStream);
+            DatabaseOpener cracker = new DatabaseOpener(fileStream);
 
             for (int i = 0; i < numThreads; i++)
             {
@@ -61,7 +59,7 @@ namespace KeePassDbCracker
                     _guessingThreadsRunning++;
                     Thread.MemoryBarrier();
 
-                    string result = AttackThread(cracker, passwordGenerator);
+                    string result = AttackThread(cracker, passwordSource);
                     if (result != null)
                         _passwordFound = result;
 
@@ -144,7 +142,7 @@ namespace KeePassDbCracker
             return true;
         }
 
-        string AttackThread(Guesser cracker, PasswordGenerator passwordGenerator)
+        string AttackThread(DatabaseOpener cracker, IPasswordSource passwordSource)
         {
             string passwordGuess;
 
@@ -156,7 +154,7 @@ namespace KeePassDbCracker
                 if (_passwordFound != null)
                     return null;
 
-                passwordGuess = passwordGenerator.NextPassword();
+                passwordGuess = passwordSource.NextPassword();
                 if (passwordGuess == null)
                     return null;
 

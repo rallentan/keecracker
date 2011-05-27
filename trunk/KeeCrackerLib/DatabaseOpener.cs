@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using NLib;
 
-namespace KeePassDbCracker
+namespace KeeCracker
 {
-    class Guesser
+    class DatabaseOpener
     {
         //--- Constants ---
 
@@ -54,7 +54,7 @@ namespace KeePassDbCracker
 
         //--- Constructors ---
 
-        public Guesser(Stream encryptedDatabase)
+        public DatabaseOpener(Stream encryptedDatabase)
         {
             if (encryptedDatabase == null)
                 throw new ArgumentNullException("encryptedDatabase");
