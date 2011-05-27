@@ -8,7 +8,7 @@
     <ProjectGuid>{B8270E6D-1E8D-41F6-92ED-32F493F365A4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KeePassDbCracker</RootNamespace>
+    <RootNamespace>KeeCracker</RootNamespace>
     <AssemblyName>KeePassDbCracker</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
@@ -92,29 +92,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CandidatePasswordGeneration\CandidatePasswordGenerator.cs" />
-    <Compile Include="CandidatePasswordGeneration\CharClassPatternTerm.cs" />
-    <Compile Include="CandidatePasswordGeneration\PatternTermSubTree.cs" />
-    <Compile Include="CandidatePasswordGeneration\LiteralPatternTerm.cs" />
-    <Compile Include="CandidatePasswordGeneration\IPatternTerm.cs" />
-    <Compile Include="CandidatePasswordGeneration\PatternTermTree.cs" />
-    <Compile Include="CandidatePasswordGeneration\PatternTermType.cs" />
-    <Compile Include="Cracker.cs" />
-    <Compile Include="Guesser.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PasswordFoundEventArgs.cs" />
     <Compile Include="PasswordGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DistributedProcessing\RemoteUnit.cs" />
-    <Compile Include="DistributedProcessing\RemoteUnitsManager.cs" />
-    <Compile Include="DistributedProcessing\RpcController.cs" />
-    <Compile Include="DistributedProcessing\ServerApi.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -148,18 +134,10 @@
       <Project>{FABAC704-4DA2-42EA-A314-9530D0C6721C}</Project>
       <Name>NLib.Windows.Forms %28.NET4%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KeeCrackerRpcApi\KeeCrackerRpcApi.csproj">
-      <Project>{C9AFF9E8-3048-49E2-A454-93D0B7690229}</Project>
-      <Name>KeeCrackerRpcApi</Name>
+    <ProjectReference Include="..\KeeCrackerLib\KeeCrackerLib.csproj">
+      <Project>{7CE0F0C6-FB1D-4FE9-8B85-B6408791D19E}</Project>
+      <Name>KeeCrackerLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="KeePassLibC32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="KeePassLibC64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
