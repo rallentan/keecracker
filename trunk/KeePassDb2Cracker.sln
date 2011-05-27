@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeeCrackerGui", "KeePassDb2Cracker\KeeCrackerGui.csproj", "{B8270E6D-1E8D-41F6-92ED-32F493F365A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeeCrackerGui", "KeeCrackerGui\KeeCrackerGui.csproj", "{B8270E6D-1E8D-41F6-92ED-32F493F365A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLib.Windows.Forms (.NET4)", "..\..\NLib\trunk\NLib.Windows.Forms (.NET4)\NLib.Windows.Forms (.NET4).csproj", "{FABAC704-4DA2-42EA-A314-9530D0C6721C}"
 EndProject
