@@ -11,9 +11,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.IO;
 using NLib.Net;
-using KeePassDbCracker.DistributedProcessing;
 
-namespace KeePassDbCracker
+namespace KeeCracker
 {
     public partial class MainForm : Form
     {
@@ -43,7 +42,9 @@ namespace KeePassDbCracker
                 MessageBox.Show("Invalid thread count");
             }
 
-            _cracker.StartAttack(databasePathLabeledTextBox.TextBoxText, 2);
+            var passwordGenerator = new PasswordGenerator();
+
+            _cracker.StartAttack(databasePathLabeledTextBox.TextBoxText, 2, passwordGenerator);
         }
 
         //--- Private Methods ---

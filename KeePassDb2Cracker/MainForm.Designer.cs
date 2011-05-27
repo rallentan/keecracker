@@ -1,4 +1,4 @@
-﻿namespace KeePassDbCracker
+﻿namespace KeeCracker
 {
     partial class MainForm
     {

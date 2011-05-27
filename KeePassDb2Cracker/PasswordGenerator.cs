@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace KeePassDbCracker
+namespace KeeCracker
 {
-    class PasswordGenerator
+    class PasswordGenerator : IPasswordSource
     {
         //--- Fields ---
         StringBuilder _password;
