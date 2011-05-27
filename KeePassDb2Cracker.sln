@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePass2DbCracker", "KeePassDb2Cracker\KeePass2DbCracker.csproj", "{B8270E6D-1E8D-41F6-92ED-32F493F365A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLib.Windows.Forms (.NET4)", "..\NLib\trunk\NLib.Windows.Forms (.NET4)\NLib.Windows.Forms (.NET4).csproj", "{FABAC704-4DA2-42EA-A314-9530D0C6721C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLib.Windows.Forms (.NET4)", "..\..\NLib\trunk\NLib.Windows.Forms (.NET4)\NLib.Windows.Forms (.NET4).csproj", "{FABAC704-4DA2-42EA-A314-9530D0C6721C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLib (.NET4 CP)", "..\NLib\trunk\NLib (.NET4 CP)\NLib (.NET4 CP).csproj", "{FB7AB6ED-7E2D-4401-97E5-3E961B6D0FEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLib (.NET4 CP)", "..\..\NLib\trunk\NLib (.NET4 CP)\NLib (.NET4 CP).csproj", "{FB7AB6ED-7E2D-4401-97E5-3E961B6D0FEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLib (Common)", "..\NLib\trunk\NLib (Common)\NLib (Common).csproj", "{5E5DA851-A5A3-4D50-BE4D-C9096EB766B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLib (Common)", "..\..\NLib\trunk\NLib (Common)\NLib (Common).csproj", "{5E5DA851-A5A3-4D50-BE4D-C9096EB766B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeeCrackerRpcApi", "KeeCrackerRpcApi\KeeCrackerRpcApi.csproj", "{C9AFF9E8-3048-49E2-A454-93D0B7690229}"
 EndProject

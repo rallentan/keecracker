@@ -92,6 +92,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CandidatePasswordGeneration\CandidatePasswordGenerator.cs" />
+    <Compile Include="CandidatePasswordGeneration\CharClassPatternTerm.cs" />
+    <Compile Include="CandidatePasswordGeneration\PatternTermSubTree.cs" />
+    <Compile Include="CandidatePasswordGeneration\LiteralPatternTerm.cs" />
+    <Compile Include="CandidatePasswordGeneration\IPatternTerm.cs" />
+    <Compile Include="CandidatePasswordGeneration\PatternTermTree.cs" />
+    <Compile Include="CandidatePasswordGeneration\PatternTermType.cs" />
     <Compile Include="Cracker.cs" />
     <Compile Include="Guesser.cs" />
     <Compile Include="MainForm.cs">
@@ -133,11 +140,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NLib\trunk\NLib %28.NET4 CP%29\NLib %28.NET4 CP%29.csproj">
+    <ProjectReference Include="..\..\..\NLib\trunk\NLib %28.NET4 CP%29\NLib %28.NET4 CP%29.csproj">
       <Project>{FB7AB6ED-7E2D-4401-97E5-3E961B6D0FEA}</Project>
       <Name>NLib %28.NET4 CP%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\NLib\trunk\NLib.Windows.Forms %28.NET4%29\NLib.Windows.Forms %28.NET4%29.csproj">
+    <ProjectReference Include="..\..\..\NLib\trunk\NLib.Windows.Forms %28.NET4%29\NLib.Windows.Forms %28.NET4%29.csproj">
       <Project>{FABAC704-4DA2-42EA-A314-9530D0C6721C}</Project>
       <Name>NLib.Windows.Forms %28.NET4%29</Name>
     </ProjectReference>

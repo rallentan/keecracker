@@ -46,7 +46,7 @@
     <Compile Include="ServerCapabilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NLib\trunk\NLib %28.NET4 CP%29\NLib %28.NET4 CP%29.csproj">
+    <ProjectReference Include="..\..\..\NLib\trunk\NLib %28.NET4 CP%29\NLib %28.NET4 CP%29.csproj">
       <Project>{FB7AB6ED-7E2D-4401-97E5-3E961B6D0FEA}</Project>
       <Name>NLib %28.NET4 CP%29</Name>
     </ProjectReference>

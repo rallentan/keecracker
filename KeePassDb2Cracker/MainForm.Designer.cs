@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.startButton = new System.Windows.Forms.Button();
-            this.timer = new System.Windows.Forms.Timer(this.components);
             this.serversButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
             this.serversGroupBox = new System.Windows.Forms.GroupBox();
@@ -56,11 +55,6 @@
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
-            // 
-            // timer
-            // 
-            this.timer.Interval = 1000;
-            this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
             // serversButton
             // 
@@ -212,7 +206,6 @@
 
         private System.Windows.Forms.Button startButton;
         private NLib.Windows.Forms.LabeledTextBox databasePathLabeledTextBox;
-        private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Button serversButton;
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.GroupBox serversGroupBox;
