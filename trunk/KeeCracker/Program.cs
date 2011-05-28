@@ -1,49 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using NLib;
 using System.IO;
+using System.Reflection;
+using NDesk.Options;
 
 namespace KeeCracker
 {
     class Program
     {
-        const string OPT_DATABASE_PATH = "DatabasePath";
-        const string OPT_WORDLIST = "WordList";
-        const string OPT_THREAD_COUNT = "ThreadCount";
-
-        static readonly ConsoleOptionSchem[] OPTION_SCHEMS = new ConsoleOptionSchem[]
-        {
-            new ConsoleOptionSchem(
-                OPT_DATABASE_PATH,
-                "KeePass 2 database file to crack.",
-                new string[] { "-d", "--database" },
-                1),
-            new ConsoleOptionSchem(
-                OPT_WORDLIST,
-                "File containing a list of passwords to try against the database.",
-                new string[] { "-w", "--wordlist" },
-                1,
-                true),
-            new ConsoleOptionSchem(
-                OPT_THREAD_COUNT,
-                "Number of threads to use.",
-                new string[] { "-t", "--threads" },
-                1),
-        };
+        static readonly string _assemblyFullName = Assembly.GetExecutingAssembly().GetName().FullName;
+        static readonly string _assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+        static OptionSet _optionSet;
 
         static void Main(string[] args)
         {
-            int threadCount;
-            var options = new ConsoleOptionParser(OPTION_SCHEMS);
-            options.ReadOptions(args);
+            int threadCount = 1;
+            bool showHelp   = false;
+            List<string> wordlists = new List<string>();
+            List<string> floatingArgs;
 
-            string dbPath = options.GetOptionInfo(OPT_DATABASE_PATH).SubOptions[0];
-            IList<string> wordlists = options.GetOptionInfo(OPT_WORDLIST).SubOptions;
-            if (!int.TryParse(options.GetOptionInfo(OPT_THREAD_COUNT).SubOptions[0], out threadCount))
-                Console.Error.WriteLine("Invalid thread count. Must be an integer.");
+            _optionSet = new OptionSet()
+                .Add(
+                    "w|wordlist=",
+                    "Path to a wordlist or ”-” without the quotes for standard in (stdin).",
+                    v => wordlists.Add(v))
+                .Add<int>(
+                    "t|threads=",
+                    "Number of threads to use.",
+                    v => threadCount = v)
+                .Add(
+                    "h|?|help",
+                    "Show this help.",
+                    v => showHelp = v != null);
 
+            try
+            {
+                floatingArgs = _optionSet.Parse(args);
+            }
+            catch (OptionException ex)
+            {
+                WriteOptionsErrorMessage(ex.Message);
+                return;
+            }
+
+            if (showHelp)
+            {
+                WriteUsageInformation();
+                return;
+            }
+
+            if (floatingArgs.Count != 1)
+            {
+                WriteOptionsErrorMessage("Must specify exactly one KeePass2 database file.");
+                return;
+            }
+
+            if (wordlists.Count == 0)
+            {
+                WriteOptionsErrorMessage("Must specify at least one wordlist.");
+                return;
+            }
+
+            if (threadCount <= 0)
+            {
+                WriteOptionsErrorMessage("The thread count must be a non-negative integer.");
+                return;
+            }
+
+            string dbPath = floatingArgs[0];
+            
             Cracker _cracker = new Cracker();
 
             _cracker.PasswordFound += new PasswordFoundEventHandler(_cracker_PasswordFound);
@@ -64,6 +91,24 @@ namespace KeeCracker
                     }
                 }
             }
+        }
+
+        static void WriteOptionsErrorMessage(string message)
+        {
+            Console.WriteLine(_assemblyFullName);
+            if (message != null)
+                Console.WriteLine(message);
+            Console.WriteLine("Try '" + Assembly.GetExecutingAssembly().GetName().Name + " --help' for more information.");
+        }
+
+        static void WriteUsageInformation()
+        {
+            Console.WriteLine(_assemblyFullName);
+            Console.WriteLine("Usage: " + _assemblyName + " [OPTIONS] <database_path>");
+            _optionSet.WriteOptionDescriptions(Console.Out);
+            Console.WriteLine("Examples:");
+            Console.WriteLine("  " + _assemblyName + " -t4 -w KeePassDb.kdbx");
+            Console.WriteLine("  john --incremental --stdout | " + _assemblyName + " -w -");
         }
 
         static void _cracker_PasswordFound(object sender, PasswordFoundEventArgs e)
