@@ -89,10 +89,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NLib\trunk\NLib %28.NET2%29\NLib %28.NET2%29.csproj">
-      <Project>{F736DC08-FF79-4A9F-A774-4CC4BD552285}</Project>
-      <Name>NLib %28.NET2%29</Name>
-    </ProjectReference>
     <ProjectReference Include="..\KeeCrackerLib\KeeCrackerLib.csproj">
       <Project>{7CE0F0C6-FB1D-4FE9-8B85-B6408791D19E}</Project>
       <Name>KeeCrackerLib</Name>
