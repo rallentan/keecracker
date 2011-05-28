@@ -126,9 +126,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NLib\trunk\NLib %28.NET4 CP%29\NLib %28.NET4 CP%29.csproj">
-      <Project>{FB7AB6ED-7E2D-4401-97E5-3E961B6D0FEA}</Project>
-      <Name>NLib %28.NET4 CP%29</Name>
+    <ProjectReference Include="..\..\..\NLib\trunk\NLib %28.NET2%29\NLib %28.NET2%29.csproj">
+      <Project>{F736DC08-FF79-4A9F-A774-4CC4BD552285}</Project>
+      <Name>NLib %28.NET2%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\NLib\trunk\NLib.Windows.Forms %28.NET4%29\NLib.Windows.Forms %28.NET4%29.csproj">
       <Project>{FABAC704-4DA2-42EA-A314-9530D0C6721C}</Project>
