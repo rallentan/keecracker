@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using NDesk.Options;
+using System.Threading;
 
 namespace KeeCracker
 {
@@ -69,14 +70,16 @@ namespace KeeCracker
             }
 
             string dbPath = floatingArgs[0];
-            
-            Cracker _cracker = new Cracker();
-
-            _cracker.PasswordFound += new PasswordFoundEventHandler(_cracker_PasswordFound);
-            _cracker.PasswordNotFound += new EventHandler(_cracker_PasswordNotFound);
 
             foreach (var wordlist in wordlists)
             {
+                Cracker _cracker = new Cracker();
+
+                _cracker.PasswordFound += _cracker_PasswordFound;
+                _cracker.PasswordNotFound += _cracker_PasswordNotFound;
+
+                var timer = new Timer(TimerCallback, _cracker, 1000, 1000);
+
                 if (wordlist == "-")
                 {
                     IPasswordSource passwordSource = new PasswordList(Console.In);
@@ -87,8 +90,12 @@ namespace KeeCracker
                     {
                         IPasswordSource passwordSource = new PasswordList(fileStream);
                         _cracker.StartAttack(dbPath, threadCount, passwordSource);
+                        _cracker.WaitUntilCompleted();
                     }
                 }
+
+                _cracker.PasswordFound -= _cracker_PasswordFound;
+                _cracker.PasswordNotFound -= _cracker_PasswordNotFound;
             }
         }
 
@@ -108,6 +115,14 @@ namespace KeeCracker
             Console.WriteLine("Examples:");
             Console.WriteLine("  " + _assemblyName + " -t4 -w KeePassDb.kdbx");
             Console.WriteLine("  john --incremental --stdout | " + _assemblyName + " -w -");
+        }
+
+        static void TimerCallback(object crackerObj)
+        {
+            var cracker = (Cracker)crackerObj;
+
+            if (!string.IsNullOrEmpty(cracker.LastGuess))
+                Console.WriteLine("Checked: " + cracker.LastGuess);
         }
 
         static void _cracker_PasswordFound(object sender, PasswordFoundEventArgs e)

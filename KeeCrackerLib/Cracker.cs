@@ -22,11 +22,14 @@ namespace KeeCracker
         bool _started = false;
         object _syncLock = new object();
         bool _stopWorking = false;
+        object _waitObject = new object();
+        bool _completed = false;
 
         //--- Events ---
 
         public event PasswordFoundEventHandler PasswordFound;
         public event EventHandler PasswordNotFound;
+        public event EventHandler Completed;
         
         //--- Public Methods ---
 
@@ -82,6 +85,7 @@ namespace KeeCracker
                     if (_guessingThreadsRunning == 0)
                     {
                         OnPasswordNotFound(EventArgs.Empty);
+                        OnCompleted(EventArgs.Empty);
                         break;
                     }
 
@@ -97,6 +101,16 @@ namespace KeeCracker
                 if (!_started)
                     throw new InvalidOperationException();
                 _stopWorking = true;
+            }
+        }
+
+        public void WaitUntilCompleted()
+        {
+            lock (_waitObject)
+            {
+                if (_completed)
+                    return;
+                Monitor.Wait(_waitObject);
             }
         }
 
@@ -124,6 +138,20 @@ namespace KeeCracker
         {
             if (PasswordNotFound != null)
                 PasswordNotFound(this, e);
+        }
+
+        protected virtual void OnCompleted(EventArgs e)
+        {
+            if (Completed != null)
+                Completed(this, e);
+
+            // Release waiting threads that called the Wait method
+
+            lock (_waitObject)
+            {
+                _completed = true;
+                Monitor.PulseAll(_waitObject);
+            }
         }
 
         //--- Private Methods ---
@@ -179,6 +207,7 @@ namespace KeeCracker
             if (_passwordFound != null)
             {
                 OnPasswordFound(new PasswordFoundEventArgs(_passwordFound));
+                OnCompleted(EventArgs.Empty);
             }
         }
     }
