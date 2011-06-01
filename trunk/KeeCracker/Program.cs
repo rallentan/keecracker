@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using NDesk.Options;
 using System.Threading;
+using System.Diagnostics;
 
 namespace KeeCracker
 {
@@ -17,7 +18,7 @@ namespace KeeCracker
         static void Main(string[] args)
         {
             int threadCount = 1;
-            bool showHelp   = false;
+            bool showHelp = false;
             List<string> wordlists = new List<string>();
             List<string> floatingArgs;
 
@@ -73,30 +74,39 @@ namespace KeeCracker
 
             foreach (var wordlist in wordlists)
             {
-                Cracker _cracker = new Cracker();
-
-                _cracker.PasswordFound += _cracker_PasswordFound;
-                _cracker.PasswordNotFound += _cracker_PasswordNotFound;
-
-                var timer = new Timer(TimerCallback, _cracker, 1000, 1000);
-
                 if (wordlist == "-")
                 {
                     IPasswordSource passwordSource = new PasswordList(Console.In);
+                    AttackWithPasswordSourceAndWait(dbPath, threadCount, passwordSource);
                 }
                 else
                 {
                     using (var fileStream = new StreamReader(wordlist))
                     {
                         IPasswordSource passwordSource = new PasswordList(fileStream);
-                        _cracker.StartAttack(dbPath, threadCount, passwordSource);
-                        _cracker.WaitUntilCompleted();
+                        AttackWithPasswordSourceAndWait(dbPath, threadCount, passwordSource);
                     }
                 }
-
-                _cracker.PasswordFound -= _cracker_PasswordFound;
-                _cracker.PasswordNotFound -= _cracker_PasswordNotFound;
             }
+
+            PressEnterToContinue();
+        }
+
+        static void AttackWithPasswordSourceAndWait(string databasePath, int threadCount, IPasswordSource passwordSource)
+        {
+            Cracker cracker = new Cracker();
+
+            cracker.PasswordFound += _cracker_PasswordFound;
+            cracker.PasswordNotFound += _cracker_PasswordNotFound;
+
+            using (var timer = new Timer(TimerCallback, cracker, 3000, 3000))
+            {
+                cracker.StartAttack(databasePath, threadCount, passwordSource);
+                cracker.WaitUntilCompleted();
+            }
+
+            cracker.PasswordFound -= _cracker_PasswordFound;
+            cracker.PasswordNotFound -= _cracker_PasswordNotFound;
         }
 
         static void WriteOptionsErrorMessage(string message)
@@ -114,20 +124,28 @@ namespace KeeCracker
             _optionSet.WriteOptionDescriptions(Console.Out);
             Console.WriteLine("Examples:");
             Console.WriteLine("  " + _assemblyName + " -t4 -w KeePassDb.kdbx");
-            Console.WriteLine("  john --incremental --stdout | " + _assemblyName + " -w -");
+            Console.WriteLine("  john --incremental --stdout | " + _assemblyName + " -w - KeePassDb.kdbx");
         }
 
         static void TimerCallback(object crackerObj)
         {
             var cracker = (Cracker)crackerObj;
 
-            if (!string.IsNullOrEmpty(cracker.LastGuess))
-                Console.WriteLine("Checked: " + cracker.LastGuess);
+            if (cracker.IsRunning && !string.IsNullOrEmpty(cracker.LastGuess))
+                Console.WriteLine("Rate: " + cracker.GuessRate.ToString("f1") + " per second" + "\tLast Candidate: " + cracker.LastGuess);
+        }
+
+        [Conditional("DEBUG")]
+        static void PressEnterToContinue()
+        {
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
         }
 
         static void _cracker_PasswordFound(object sender, PasswordFoundEventArgs e)
         {
-            Console.WriteLine("Password cracked!\n\n" + e.Password);
+            Console.WriteLine("Password cracked!");
+            Console.WriteLine("Password: " + e.Password);
         }
 
         static void _cracker_PasswordNotFound(object sender, EventArgs e)

@@ -14,7 +14,8 @@ namespace KeeCracker
         const int STATISTICS_UPDATE_INTERVAL = 5000;  // milliseconds
 
         //--- Fields ---
-        int _guessesSinceLastSpeedCheck = 0;
+        int _guessCounter = 0;
+        Stopwatch stopwatch = new Stopwatch();
         string _passwordFound;
         uint _guessingThreadsRunning = 0;
         string _lastGuess;
@@ -50,8 +51,9 @@ namespace KeeCracker
 
             var fileStream = new FileStream(databasePath, FileMode.Open, FileAccess.Read);
 
-            DatabaseOpener cracker = new DatabaseOpener(fileStream);
+            DatabaseOpener databaseOpener = new DatabaseOpener(fileStream);
 
+            stopwatch.Start();
             for (int i = 0; i < numThreads; i++)
             {
                 EasyThread.BeginInvoke(new EasyThreadMethod(
@@ -61,37 +63,29 @@ namespace KeeCracker
                     _guessingThreadsRunning++;
                     Thread.MemoryBarrier();
 
-                    string result = AttackThread(cracker, passwordSource);
-                    if (result != null)
-                        _passwordFound = result;
+                    string result = AttackThread(databaseOpener, passwordSource);
 
                     Thread.MemoryBarrier();
                     _guessingThreadsRunning--;
                     Thread.MemoryBarrier();
 
-                    if (_guessingThreadsRunning == 0)
-                        fileStream.Close();
-                }));
-            }
-
-            EasyThread.BeginInvoke(new EasyThreadMethod(
-            () =>
-            {
-                Stopwatch stopWatch = new Stopwatch();
-                stopWatch.Start();
-
-                while (true)
-                {
-                    if (_guessingThreadsRunning == 0)
+                    if (result != null)
+                    {
+                        _passwordFound = result;
+                        OnPasswordFound(new PasswordFoundEventArgs(_passwordFound));
+                    }
+                    else if (_guessingThreadsRunning == 0)
                     {
                         OnPasswordNotFound(EventArgs.Empty);
-                        OnCompleted(EventArgs.Empty);
-                        break;
                     }
 
-                    Thread.Sleep(STATISTICS_UPDATE_INTERVAL);
-                }
-            }));
+                    if (_guessingThreadsRunning == 0)
+                    {
+                        fileStream.Close();
+                        OnCompleted(EventArgs.Empty);
+                    }
+                }));
+            }
         }
 
         public void Stop()
@@ -118,12 +112,38 @@ namespace KeeCracker
 
         public string LastGuess
         {
-            get { return _lastGuess; }
+            get
+            {
+                Thread.MemoryBarrier();
+                return _lastGuess;
+            }
         }
 
         public float GuessRate
         {
-            get { return _guessRate; }
+            get
+            {
+                float result = float.PositiveInfinity;
+
+                var elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+                if (elapsedMilliseconds != 0)
+                    result = (float)_guessCounter / (float)elapsedMilliseconds * 1000;
+
+                stopwatch.Reset();
+                stopwatch.Start();
+                _guessCounter = 0;
+
+                return result;
+            }
+        }
+
+        public bool IsRunning
+        {
+            get
+            {
+                Thread.MemoryBarrier();
+                return _started && !_completed;
+            }
         }
 
         //--- Protected Methods ---
@@ -142,6 +162,8 @@ namespace KeeCracker
 
         protected virtual void OnCompleted(EventArgs e)
         {
+            stopwatch.Stop();
+
             if (Completed != null)
                 Completed(this, e);
 
@@ -190,7 +212,7 @@ namespace KeeCracker
 
                 Thread.MemoryBarrier();
 
-                _guessesSinceLastSpeedCheck++;
+                _guessCounter++;
                 _lastGuess = passwordGuess;
             }
 
@@ -199,8 +221,8 @@ namespace KeeCracker
 
         void UpdateStatistics()
         {
-            _guessRate = (float)_guessesSinceLastSpeedCheck / (float)STATISTICS_UPDATE_INTERVAL;
-            _guessesSinceLastSpeedCheck = 0;
+            _guessRate = (float)_guessCounter / (float)STATISTICS_UPDATE_INTERVAL;
+            _guessCounter = 0;
 
             Thread.MemoryBarrier();
 
