@@ -115,17 +115,15 @@ namespace KeeCracker
             IntPtr hKey = Marshal.AllocHGlobal(pKey256.Length);
             Marshal.Copy(pKey256, 0, hKey, pKey256.Length);
 
-            var kvp = new KeyValuePair<IntPtr, IntPtr>(hBuf, hKey);
-
             // Call native method
             bool bResult = false;
 
             try
             {
                 if (Marshal.SizeOf(typeof(IntPtr)) == 8)
-                    bResult = TransformKey64(kvp.Key, kvp.Value, uRounds);
+                    bResult = TransformKey64(hBuf, hKey, uRounds);
                 else
-                    bResult = TransformKey32(kvp.Key, kvp.Value, uRounds);
+                    bResult = TransformKey32(hBuf, hKey, uRounds);
             }
             catch (Exception)
             {
@@ -135,26 +133,27 @@ namespace KeeCracker
             if (bResult)
             {
                 // Get buffers
-                if (kvp.Key != IntPtr.Zero)
-                    Marshal.Copy(kvp.Key, pBuf256, 0, pBuf256.Length);
+                if (hBuf != IntPtr.Zero)
+                    Marshal.Copy(hBuf, pBuf256, 0, pBuf256.Length);
 
-                if (kvp.Value != IntPtr.Zero)
-                    Marshal.Copy(kvp.Value, pKey256, 0, pKey256.Length);
+                if (hKey != IntPtr.Zero)
+                    Marshal.Copy(hKey, pKey256, 0, pKey256.Length);
             }
 
             // Free arrays
-            if (kvp.Key != IntPtr.Zero)
-                Marshal.FreeHGlobal(kvp.Key);
+            if (hBuf != IntPtr.Zero)
+                Marshal.FreeHGlobal(hBuf);
 
-            if (kvp.Value != IntPtr.Zero)
-                Marshal.FreeHGlobal(kvp.Value);
+            if (hKey != IntPtr.Zero)
+                Marshal.FreeHGlobal(hKey);
 
             return bResult;
         }
 
         byte[] TransformKey(byte[] key, byte[] transformSeed, ulong numberOfRounds)
         {
-            // Try to use the native library first
+            // Only attempt to use the native library, the managed version would
+            // probably be too slow for this type of program.
             if (!TransformKey256(key, transformSeed, numberOfRounds))
                 throw new Exception();
 
