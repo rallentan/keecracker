@@ -1,0 +1,1 @@
+KeeCracker requires the NLib .NET Library. The trunk can be checked out in SVN (https://subversion.assembla.com/svn/NLib/trunk). Alternatively, you can reference NLib.dll if it was provided with your copy of the source code.
