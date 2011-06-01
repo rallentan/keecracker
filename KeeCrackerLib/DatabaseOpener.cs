@@ -79,7 +79,7 @@ namespace KeeCracker
             var rawCompositeKey = GenerateRawCompositeKey(userKey);  // returns byte[32]
             var transformedRawCompositeKey = TransformKey(rawCompositeKey, _transformSeed, _transformRounds);  // returns byte[32]
             
-            var aesKey = GenerateMasterKey(_masterSeed, transformedRawCompositeKey);  // Output is byte[64]
+            var aesKey = GenerateAesKey(_masterSeed, transformedRawCompositeKey);  // Output is byte[64]
 
             Stream decryptedDatabase = PerformDecrypt(_encryptedDatabase, aesKey, _initializationVectors);
             _encryptedDatabase.Seek(_dataStartOffset, SeekOrigin.Begin);
@@ -123,9 +123,9 @@ namespace KeeCracker
             try
             {
                 if (Marshal.SizeOf(typeof(IntPtr)) == 8)
-                    return TransformKey64(kvp.Key, kvp.Value, uRounds);
+                    bResult = TransformKey64(kvp.Key, kvp.Value, uRounds);
                 else
-                    return TransformKey32(kvp.Key, kvp.Value, uRounds);
+                    bResult = TransformKey32(kvp.Key, kvp.Value, uRounds);
             }
             catch (Exception)
             {
@@ -161,7 +161,7 @@ namespace KeeCracker
             return _sha256.ComputeHash(key);
         }
 
-        byte[] GenerateMasterKey(byte[] masterSeed, byte[] transformedRawCompositeKey)
+        byte[] GenerateAesKey(byte[] masterSeed, byte[] transformedRawCompositeKey)
         {
             masterSeed.CopyTo(_buffer, 0);
             transformedRawCompositeKey.CopyTo(_buffer, 32);
